@@ -27,9 +27,16 @@ Guidance for AI coding agents working in this repository.
 - The pre-commit hook also runs `ruff format` on staged Python files in `apps/super-be` (configured under `lint-staged` in `package.json`). It formats only; it does not run `ruff check`.
 - `.husky/pre-push` runs `npx nx affected -t test:quick`, so a push runs `test:quick` only for projects changed since `main` (`defaultBase` in `nx.json`). Do not skip it with `--no-verify` unless the user asks.
 - TypeScript apps must reject implicit `any`. Keep `noImplicitAny: true` set explicitly in each `tsconfig.json`.
-- `apps/super-web` is a Next.js App Router app in TypeScript. Unit tests use Vitest with jsdom and Testing Library, in `*.test.tsx` files next to the code. Vitest globals are off, so call `cleanup` in `afterEach` when rendering components. It has its own `package.json` and lock file, and it is not an npm workspace. Keep `typescript` on 5.x: `typescript-eslint` does not support TypeScript 7 yet, and `lint` fails with it. Keep `@types/node` on 24 to match the Node pin.
-- `apps/super-be` is a FastAPI app in Python 3.13+, managed with uv. Its package is `super_be/`, and its tests are in `tests/`. Ruff and pyright are configured in `pyproject.toml`. Run `uv run ruff format .` to fix formatting. Commit `uv.lock`.
-- `apps/super-web-e2e` has Playwright tests in `tests/`. The Playwright config builds and starts `super-web` on port 3000 if it isn't already running, and the tests run against the production build.
+- `apps/super-web` is a Next.js App Router app in TypeScript. Unit tests use Vitest with jsdom and Testing Library, in `*_tests.tsx` files next to the code (see Tests below). Vitest globals are off, so call `cleanup` in `afterEach` when rendering components. It has its own `package.json` and lock file, and it is not an npm workspace. Keep `typescript` on 5.x: `typescript-eslint` does not support TypeScript 7 yet, and `lint` fails with it. Keep `@types/node` on 24 to match the Node pin.
+- `apps/super-be` is a FastAPI app in Python 3.13+, managed with uv. Its package is `super_be/`, and its tests sit next to the source as `*_tests.py` (see Tests below). Ruff and pyright are configured in `pyproject.toml`. Run `uv run ruff format .` to fix formatting. Commit `uv.lock`.
+- `apps/super-web-e2e` has Playwright tests in `tests/`. The Playwright config builds and starts `super-web` on port 3000 if it isn't already running, waits for `/api/health` to return, and then runs the tests against the production build.
+
+## Tests
+
+- Unit tests live next to the source file, named `*_tests.ts`, `*_tests.tsx`, or `*_tests.py`. `super-web` runs them with Vitest and `super-be` with pytest, so the tests use those runners, not Node's built-in runner.
+- Config checks that apply only in production mode use `*_production_tests.*`. The `test:unit` targets skip them. Use this name for production-only assertions, not for general unit tests.
+- Test files are excluded from type-aware linting. ESLint is not type-aware in this repo yet, so apply this when type-aware linting is added.
+- E2E tests use Playwright and run against a real server. Playwright starts the server and waits for `GET /api/health` before the tests run. Keep `/api/health` working, because the e2e setup depends on it.
 - `.gitignore` covers Python, Node.js, Nx cache (`.nx/`), Next.js and test output (`.next/`, `.vitest/`, `test-results/`, `playwright-report/`), env files, and local tool settings. Add new tool output there, not in per-app ignore files.
 
 ## Agent skills
