@@ -17,7 +17,9 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["super_be"]
+python_files = ["*_tests.py"]
+addopts = "--ignore-glob=*_production_tests.py"
 pythonpath = ["."]
 
 [tool.ruff]
@@ -28,6 +30,6 @@ target-version = "py313"
 select = ["E", "F", "I", "B", "UP"]
 
 [tool.pyright]
-include = ["super_be", "tests"]
+include = ["super_be"]
 pythonVersion = "3.13"
 typeCheckingMode = "standard"
