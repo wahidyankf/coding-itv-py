@@ -42,3 +42,14 @@ coverage/
 .DS_Store
 .idea/
 .vscode/
+
+# Frontend and test output (apps/)
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+.vitest/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
