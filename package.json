@@ -11,6 +11,9 @@
   "author": "",
   "license": "ISC",
   "type": "commonjs",
+  "engines": {
+    "node": ">=24.21.0"
+  },
   "workspaces": [
     "packages/*"
   ],
@@ -24,5 +27,8 @@
   },
   "lint-staged": {
     "*.{js,cjs,mjs,json,md,yml,yaml}": "prettier --write"
+  },
+  "volta": {
+    "node": "24.21.0"
   }
 }
