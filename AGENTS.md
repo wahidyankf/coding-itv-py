@@ -34,6 +34,7 @@ Guidance for AI coding agents working in this repository.
 
 ## Tests
 
+- Use TDD (test-driven development) for every code change. Follow Red - Green - Refactor: write a failing test first (Red), write the least code to make it pass (Green), then clean up the code while the tests stay green (Refactor). Run the test to see it fail before you write the code, so you know it tests the right thing.
 - Unit tests live next to the source file, named `*_tests.ts`, `*_tests.tsx`, or `*_tests.py`. `super-web` runs them with Vitest and `super-be` with pytest, so the tests use those runners, not Node's built-in runner.
 - Config checks that apply only in production mode use `*_production_tests.*`. The `test:unit` targets skip them. Use this name for production-only assertions, not for general unit tests.
 - Test files are excluded from type-aware linting. ESLint is not type-aware in this repo yet, so apply this when type-aware linting is added.
