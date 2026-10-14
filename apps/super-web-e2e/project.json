@@ -1,0 +1,48 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "super-web-e2e",
+  "projectType": "application",
+  "sourceRoot": "apps/super-web-e2e/tests",
+  "implicitDependencies": ["super-web"],
+  "targets": {
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx tsc --noEmit",
+        "cwd": "apps/super-web-e2e"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx eslint .",
+        "cwd": "apps/super-web-e2e"
+      }
+    },
+    "test:e2e": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx playwright test",
+        "cwd": "apps/super-web-e2e"
+      }
+    },
+    "test:e2e:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx playwright test --ui",
+        "cwd": "apps/super-web-e2e"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx typecheck super-web-e2e",
+          "npx nx lint super-web-e2e"
+        ],
+        "cwd": ".",
+        "parallel": false
+      }
+    }
+  }
+}
