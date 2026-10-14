@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository.
 
 ## Project
 
-`coding-itv-py` is a Python project. It has no source code or build, lint, or test commands yet. Update this file when they exist.
+`coding-itv-py` is a monorepo with three apps in `apps/`: `super-web` (Next.js), `super-be` (FastAPI), and `super-web-e2e` (Playwright). Shared tooling and rules are at the root.
 
 ## Repository setup
 
@@ -13,8 +13,24 @@ Guidance for AI coding agents working in this repository.
 - Node is pinned to 24.21.0 (the current LTS) with Volta, in the `volta` field of `package.json`. `engines` requires `>=24.21.0`. Use Volta so the pinned version is used automatically.
 - Prettier formats JS, JSON, Markdown, and YAML. Husky runs `lint-staged` from `.husky/pre-commit` on commit, and lint-staged runs `prettier --write` on the staged files. Run `npm install` after cloning so the hooks get installed by the `prepare` script.
 - Commit messages must follow Conventional Commits. `.husky/commit-msg` runs commitlint with `@commitlint/config-conventional`, configured in `commitlint.config.js`. Allowed types are build, chore, ci, docs, feat, fix, perf, refactor, revert, style, and test.
-- The repo is an Nx workspace using npm workspaces (`packages/*`). `nx.json` is the workspace config. No Nx plugins are installed, and no projects are defined yet. `apps/` and `libs/` exist at the root for future projects. Add `project.json` files for projects and use `nx:run-commands` for targets.
-- `.gitignore` covers Python, Node.js, Nx cache (`.nx/`), env files, and local tool settings.
+- The repo is an Nx workspace using npm workspaces (`packages/*`). `nx.json` is the workspace config. `apps/` and `libs/` are at the root.
+- Do not install or use Nx plugins (`@nx/*`, `nx-*` packages, or plugin entries in `nx.json`). Define every target in a `project.json` with `"executor": "nx:run-commands"` and a `command` option. Do not use `nx init`, which can add plugins.
+- Every app in `apps/` has a `project.json` with the same target set. Run targets with `npx nx <target> <app>`, for example `npx nx test:quick super-be`.
+  - `typecheck`: `tsc --noEmit` for TypeScript apps, `pyright` for `super-be`.
+  - `lint`: ESLint for TypeScript, `ruff check` for `super-be`.
+  - `test:unit` and `test:unit:watch`: Vitest for `super-web`, pytest and pytest-watcher for `super-be`.
+  - `test:e2e` and `test:e2e:watch`: Playwright, for `super-web-e2e` only.
+  - `dev`: starts the dev server, for `super-web` and `super-be` only.
+  - `start`: runs the production server. For `super-web` it runs `next start` after `build`. For `super-be` it runs uvicorn without reload, and it has no build step.
+  - Extra targets: `build` (`super-web` only) and `format` (`super-be`, `ruff format --check`).
+  - `test:quick`: runs the same app's `typecheck`, `lint`, and `test:unit` targets, in that order, through `npx nx <target> <app>`. Change a check in its own target, not in `test:quick`. `super-web-e2e` has no `test:unit`, so its `test:quick` runs `typecheck` and `lint`.
+- The pre-commit hook also runs `ruff format` on staged Python files in `apps/super-be` (configured under `lint-staged` in `package.json`). It formats only; it does not run `ruff check`.
+- `.husky/pre-push` runs `npx nx affected -t test:quick`, so a push runs `test:quick` only for projects changed since `main` (`defaultBase` in `nx.json`). Do not skip it with `--no-verify` unless the user asks.
+- TypeScript apps must reject implicit `any`. Keep `noImplicitAny: true` set explicitly in each `tsconfig.json`.
+- `apps/super-web` is a Next.js App Router app in TypeScript. Unit tests use Vitest with jsdom and Testing Library, in `*.test.tsx` files next to the code. Vitest globals are off, so call `cleanup` in `afterEach` when rendering components. It has its own `package.json` and lock file, and it is not an npm workspace. Keep `typescript` on 5.x: `typescript-eslint` does not support TypeScript 7 yet, and `lint` fails with it. Keep `@types/node` on 24 to match the Node pin.
+- `apps/super-be` is a FastAPI app in Python 3.13+, managed with uv. Its package is `super_be/`, and its tests are in `tests/`. Ruff and pyright are configured in `pyproject.toml`. Run `uv run ruff format .` to fix formatting. Commit `uv.lock`.
+- `apps/super-web-e2e` has Playwright tests in `tests/`. The Playwright config builds and starts `super-web` on port 3000 if it isn't already running, and the tests run against the production build.
+- `.gitignore` covers Python, Node.js, Nx cache (`.nx/`), Next.js and test output (`.next/`, `.vitest/`, `test-results/`, `playwright-report/`), env files, and local tool settings. Add new tool output there, not in per-app ignore files.
 
 ## Agent skills
 
