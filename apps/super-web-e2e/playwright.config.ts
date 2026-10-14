@@ -21,7 +21,8 @@ export default defineConfig({
   ],
   webServer: {
     command: "npm --prefix ../super-web run build && npm --prefix ../super-web run start",
-    url: `http://localhost:${port}`,
+    // Wait for the health check, not just an open port, so tests start only when the app is ready.
+    url: `http://localhost:${port}/api/health`,
     reuseExistingServer: !process.env.CI,
     timeout: 240_000,
   },
