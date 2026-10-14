@@ -1,12 +1,13 @@
 # coding-itv-py
 
-A skeleton project for software engineer coding interviews, Python version. It is a small monorepo with a working FastAPI backend, a Next.js frontend, and end-to-end tests. Use it as a starting point: read the code, run the checks, and then add the feature or fix the interview asks for.
+A skeleton project for software engineer coding interviews, Python version. It is a small monorepo with a working FastAPI backend, a Python CLI, a Next.js frontend, and end-to-end tests. Use it as a starting point: read the code, run the checks, and then add the feature or fix the interview asks for.
 
 ## What is inside
 
 | App                  | Stack                            | Purpose                                                         |
 | -------------------- | -------------------------------- | --------------------------------------------------------------- |
 | `apps/super-be`      | FastAPI, Python 3.13+, uv        | Python backend. This is the main area for the Python interview. |
+| `apps/super-cli`     | Typer, Python 3.13+, uv          | Command-line tool for the same project.                         |
 | `apps/super-web`     | Next.js (App Router), TypeScript | Web frontend.                                                   |
 | `apps/super-web-e2e` | Playwright                       | End-to-end tests against the running web app.                   |
 
@@ -40,6 +41,7 @@ npx nx dev super-be             # backend with reload at http://localhost:8000
 npx nx dev super-web            # frontend at http://localhost:3000
 npx nx test:unit super-be       # pytest
 npx nx test:quick super-be      # typecheck + lint + unit tests
+npx nx start super-cli -- health # CLI command, prints {"status":"ok"}
 npx nx test:e2e super-web-e2e   # Playwright (starts the web app for you)
 ```
 
@@ -60,6 +62,9 @@ apps/
   super-be/          FastAPI app
     super_be/        package code, with tests next to it (*_tests.py)
     pyproject.toml   dependencies, pytest, ruff, and pyright config
+  super-cli/         Typer CLI
+    super_cli/       package code, with tests next to it (*_tests.py)
+    pyproject.toml   dependencies, pytest, ruff, and pyright config
   super-web/         Next.js app
     app/             routes and components, with tests next to them (*_tests.tsx)
   super-web-e2e/     Playwright tests (tests/)
@@ -71,7 +76,7 @@ libs/                shared code for future use (empty for now)
 - Tests live next to the code. Name them `*_tests.py`, `*_tests.ts`, or `*_tests.tsx`.
 - Production-only config checks use `*_production_tests.*`. The unit test runs skip them.
 - Commits must follow [Conventional Commits](https://www.conventionalcommits.org). A commit-msg hook checks this.
-- The pre-commit hook formats staged files (Prettier for web files, `ruff format` for Python).
+- The pre-commit hook formats staged files (Prettier for web files, `ruff format` for Python in `super-be` and `super-cli`).
 - The pre-push hook runs `test:quick` on the projects changed since `main`.
 
 The file [`AGENTS.md`](AGENTS.md) has more detail for AI coding agents and for the repo's full rules.
