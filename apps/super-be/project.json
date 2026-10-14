@@ -1,0 +1,69 @@
+{
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "name": "super-be",
+  "projectType": "application",
+  "sourceRoot": "apps/super-be/super_be",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run uvicorn super_be.main:app --reload",
+        "cwd": "apps/super-be"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run uvicorn super_be.main:app",
+        "cwd": "apps/super-be"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run ruff check .",
+        "cwd": "apps/super-be"
+      }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run ruff format --check .",
+        "cwd": "apps/super-be"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run pyright",
+        "cwd": "apps/super-be"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run pytest",
+        "cwd": "apps/super-be"
+      }
+    },
+    "test:unit:watch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "uv run ptw .",
+        "cwd": "apps/super-be"
+      }
+    },
+    "test:quick": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx nx typecheck super-be",
+          "npx nx lint super-be",
+          "npx nx test:unit super-be"
+        ],
+        "cwd": ".",
+        "parallel": false
+      }
+    }
+  }
+}
