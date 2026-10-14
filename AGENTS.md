@@ -8,13 +8,17 @@ Guidance for AI coding agents working in this repository.
 
 ## Repository setup
 
-- Git uses `master` as the default branch. It is pushed to `origin` at `git@github.com:wahidyankf/coding-itv-py.git`.
-- `package.json` exists from `npm init -y`, with npm's placeholder `test` script. Nothing in the project uses Node yet.
-- Node is pinned to 24.21.0 (the current LTS) with Volta, in the `volta` field of `package.json`. Use Volta so the pinned version is used automatically.
+- Git uses `main` as the default branch. It is pushed to `origin` at `git@github.com:wahidyankf/coding-itv-py.git`. Do not delete or use `master`; it is an old remote branch.
+- `package.json` comes from `npm init -y`. Its `test` script is still npm's placeholder.
+- Node is pinned to 24.21.0 (the current LTS) with Volta, in the `volta` field of `package.json`. `engines` requires `>=24.21.0`. Use Volta so the pinned version is used automatically.
 - Prettier formats JS, JSON, Markdown, and YAML. Husky runs `lint-staged` from `.husky/pre-commit` on commit, and lint-staged runs `prettier --write` on the staged files. Run `npm install` after cloning so the hooks get installed by the `prepare` script.
 - Commit messages must follow Conventional Commits. `.husky/commit-msg` runs commitlint with `@commitlint/config-conventional`, configured in `commitlint.config.js`. Allowed types are build, chore, ci, docs, feat, fix, perf, refactor, revert, style, and test.
-- The repo is an Nx workspace using npm workspaces (`packages/*`). `nx.json` is the workspace config. No Nx plugins are installed, and projects are not defined yet. Add `project.json` files under `packages/` and use `nx:run-commands` for targets.
-- `.gitignore` covers Python, Node.js, env files, and local tool settings.
+- The repo is an Nx workspace using npm workspaces (`packages/*`). `nx.json` is the workspace config. No Nx plugins are installed, and no projects are defined yet. `apps/` and `libs/` exist at the root for future projects. Add `project.json` files for projects and use `nx:run-commands` for targets.
+- `.gitignore` covers Python, Node.js, Nx cache (`.nx/`), env files, and local tool settings.
+
+## Agent skills
+
+- `grill-me` is in `.agents/skills/grill-me/SKILL.md`. Its copy in `.claude/skills/grill-me/SKILL.md` points to the `.agents` copy. It comes from `wahidyankf/ose-rules`. Use it before a material choice that has more than one reasonable answer.
 
 ## Conventions
 
